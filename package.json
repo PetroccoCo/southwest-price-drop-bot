@@ -43,6 +43,7 @@
   },
   "devDependencies": {
     "nodemon": "1.11.0",
-    "semistandard": "11.0.0"
+    "semistandard": "11.0.0",
+    "tape": "4.8.0"
   }
 }
