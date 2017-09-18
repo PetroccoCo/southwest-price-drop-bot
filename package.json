@@ -18,7 +18,8 @@
     "develop": "nodemon --trace-warnings index.js",
     "lint": "semistandard --fix",
     "start": "node --trace-warnings index.js",
-    "task:check": "node --trace-warnings tasks/check.js"
+    "task:check": "node --trace-warnings tasks/check.js",
+    "test": "tape test/**/*.js"
   },
   "dependencies": {
     "bluebird": "3.5.0",
