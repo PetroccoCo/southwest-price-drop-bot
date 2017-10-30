@@ -2,7 +2,7 @@ require('dotenv').config({ silent: true });
 
 const redis = require('../lib/redis.js');
 const Alert = require('../lib/bot/alert.js');
-const sms = require('../lib/bot/send-sms.js');
+const sms = require('../lib/bot/send-email.js');
 
 const COOLDOWN = 3 * 24 * 60 * 60; // max one text every 3 days
 
@@ -48,7 +48,7 @@ const COOLDOWN = 3 * 24 * 60 * 60; // max one text every 3 days
               `\n\nOnce you re-book your flight, tap this link to lower your alert threshold accordingly: `,
               `${noProtocolPath}/${alert.id}/change-price?price=${alert.latestPrice}`
             ].join('');
-            await sms.sendSms(alert.phone, message);
+            await sms.sendEmail(message);
             await redis.setAsync(cooldownKey, '');
             await redis.expireAsync(cooldownKey, COOLDOWN);
           }
