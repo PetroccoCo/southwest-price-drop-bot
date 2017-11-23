@@ -23,8 +23,12 @@
       "description": "Your Plivo phone number. Example: 12223334444",
       "required": false
     },
-    "API_KEY": {
+    "MAILGUN_API_KEY": {
       "description": "If you would like to use email, API KEY for using mailgun",
+      "required": false
+    },
+    "MAILGUN_DOMAIN": {
+      "description": "The domain to send emails from, e.g. mg.example.com",
       "required": false
     },
     "FROM_EMAIL": {
