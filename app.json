@@ -12,22 +12,28 @@
       "description": "Login password, used for all accounts."
     },
     "PLIVO_ID": {
-      "description": "Your Plivo Auth ID."
+      "description": "If you would like to use sms, enter your Plivo Auth ID.",
+      "required": false
     },
     "PLIVO_TOKEN": {
-      "description": "Your Plivo Auth token."
+      "description": "Your Plivo Auth token.",
+      "required": false
     },
     "PLIVO_NUMBER": {
-      "description": "Your Plivo phone number. Example: 12223334444"
+      "description": "Your Plivo phone number. Example: 12223334444",
+      "required": false
     },
     "API_KEY": {
-      "description": "API KEY for using mailgun"
+      "description": "If you would like to use email, API KEY for using mailgun",
+      "required": false
     },
     "FROM_EMAIL": {
-      "description": "Email address to send mail from with Mailgun.  Example: Mailgun Sandbox <postmaster@sandbox0abcdefghijklmnopqrstuvwxyz.mailgun.org>"
+      "description": "Email address to send mail from with Mailgun.  Example: Mailgun Sandbox <postmaster@sandbox0abcdefghijklmnopqrstuvwxyz.mailgun.org>",
+      "required": false
     },
     "TO_EMAIL": {
-      "description": "Email address to send alerts with Mailgun.  Example: abc@gmail.com"
+      "description": "Email addresses (comma separated) to send alerts with Mailgun.  Example: abc@gmail.com, xyz@gmail.com",
+      "required": false
     },
     "NODE_MODULES_CACHE": {
       "description": "Leave this set to false.",
