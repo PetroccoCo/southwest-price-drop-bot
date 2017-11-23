@@ -2,7 +2,8 @@ require('dotenv').config({ silent: true });
 
 const redis = require('../lib/redis.js');
 const Alert = require('../lib/bot/alert.js');
-const sms = require('../lib/bot/send-email.js');
+const email = require('../lib/bot/send-email.js');
+const sms = require('../lib/bot/send-sms.js');
 
 const COOLDOWN = 3 * 24 * 60 * 60; // max one text every 3 days
 
@@ -52,7 +53,7 @@ const COOLDOWN = 3 * 24 * 60 * 60; // max one text every 3 days
               await sms.sendSms(alert.phone, message);
             }
             if (email.enabled) {
-              await sms.sendEmail(message);
+              await email.sendEmail(message);
             }
             await redis.setAsync(cooldownKey, '');
             await redis.expireAsync(cooldownKey, COOLDOWN);
