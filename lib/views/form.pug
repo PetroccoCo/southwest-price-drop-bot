@@ -97,7 +97,6 @@ mixin form(alert)
           id='phone'
           name='phone'
           type='tel'
-          required
           placeholder='12223334444'
           pattern='1\\d{10}'
           value=(alert && alert.phone || !auth.isAdmin && auth.user || undefined)
