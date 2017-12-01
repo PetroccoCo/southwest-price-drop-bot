@@ -20,7 +20,7 @@ mixin form(alert)
       margin-bottom: 20px;
     }
 
-  form(action=(alert ? `/${alert.id}` : '/') method='post')
+  form(action=(alert ? `/update/${alert.id}` : '/') method='post')
     div.form-container
       div.field
         label(for='date') Date
