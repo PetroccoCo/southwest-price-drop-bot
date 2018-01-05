@@ -2,7 +2,7 @@ extends layout.pug
 
 mixin linkCell (alert, value)
   td
-    a&attributes(attributes)(href='/show/' + alert.id)= value
+    a&attributes(attributes)(href='/' + alert.id)= value
 
 block content
   style.
@@ -116,7 +116,7 @@ block content
   if alerts.length
     div.alerts
       each alert in alerts
-        a.alert-link(href='/show/' + alert.id)
+        a.alert-link(href='/' + alert.id)
           if alert.priceHasDropped
             div.dropped-banner Price drop alert! Re-book now and save $#{alert.price - alert.latestPrice}!
           div.alert(class=(alert.priceHasDropped ? 'dropped' : ''))
