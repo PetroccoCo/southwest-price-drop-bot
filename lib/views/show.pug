@@ -27,6 +27,13 @@ block content
   h3 Alert details
 
   div.date= alert.formattedDate
+  div.user= `User: ${alert.user}`
+  if alert.formattedPhone !== ""
+    div.phone= `Texting: ${alert.formattedPhone}`
+  if alert.formattedEmail !== ""
+    div.to_email= `Emailing: ${alert.formattedEmail}`
+  if alert.formattedPhone === "" && alert.formattedEmail === ""
+    div.no-notifications No notifications
   br
 
   div.from-to= `${alert.from}-${alert.to}`
@@ -37,10 +44,13 @@ block content
     tbody
       tr
         td Current price
-        td= alert.latestPrice === Infinity ? 'Updating...' : `$${alert.latestPrice}`
+        td= alert.latestPrice === Infinity ? 'Updating... *' : `$${alert.latestPrice}`
       tr
         td Alert price
         td $#{alert.price}
+      tr
+        td= alert.latestPrice === Infinity ? '*' : ''
+        td= alert.latestPrice === Infinity ? 'Verify correct information if not updated after refresh' : ''
 
   div.graph!= graph
 
@@ -48,3 +58,5 @@ block content
     a.button.edit-button(href=`/${alert.id}/edit`) Edit
     div.button-spacer
     a.button.delete-button(href=`/${alert.id}/delete`) Delete
+
+

@@ -29,10 +29,13 @@ mixin form(alert)
           name='date'
           type='date'
           required
+          pattern='(([12]\\d{3}[-/.]((0[1-9]|1[0-2])|([1-9]))[-/.]((0[1-9]|[12]\\d|3[01])|([1-9])))|(((0[1-9]|1[0-2])|([1-9]))[-/.]((0[1-9]|[12]\\d|3[01])|([1-9]))[-/.](([12]\\d{3})|(\\d{2}))))'
           placeholder='YYYY-MM-DD'
           min=((new Date()).toISOString().substr(0, 10))
           value=(alert && alert.date.toISOString().substr(0, 10))
         )
+        span.help Date should be in YYYY-MM-DD or MM/DD/YYYY, example:
+          code.example 2012-12-21
 
       div.field
         label(for='from') From
@@ -75,7 +78,7 @@ mixin form(alert)
           pattern='[\\d,\\s*]+'
           value=(alert && alert.number)
         )
-        span.help If the flight has one or more stops, separate flight numbers with a comma, example:
+        span.help If the flight has multiple legs, separate flight numbers with a comma, example:
           code.example 123, 456
 
       div.field
@@ -88,7 +91,7 @@ mixin form(alert)
           placeholder='175'
           value=(alert && alert.price)
         )
-        span.help We'll text you if the price drops below this threshold, example:
+        span.help We'll message you if the price drops below this threshold, example:
           code.example 160
 
       div.field
@@ -101,8 +104,22 @@ mixin form(alert)
           pattern='1\\d{10}'
           value=(alert && alert.phone || !auth.isAdmin && auth.user || undefined)
         )
-        span.help Include your country code, example:
+        span.help Enter if you want to be texted your price drop
+          br
+          | Include your country code, example:
           code.example 12223334444
+
+      div.field
+        label(for='to_email') Email
+        input(
+          id='to_email'
+          name='to_email'
+          type='email'
+          placeholder='name@example.com'
+          value=(alert && alert.to_email || !auth.isAdmin && auth.user || undefined)
+        )
+        span.help Enter if you want to be emailed your price drop, example:
+          code.example name@example.com
 
     div.field
       div.buttons

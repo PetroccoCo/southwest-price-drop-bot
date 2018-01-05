@@ -1,7 +1,7 @@
 {
   "name": "Southwest Price Drop Bot",
   "description": "Bot that watches Southwest flights for price drops.",
-  "repository": "https://github.com/scott113341/southwest-price-drop-bot",
+  "repository": "https://github.com/petroccoco/southwest-price-drop-bot",
   "success_url": "/",
   "env": {
     "ADMIN_NAME": {
@@ -31,12 +31,8 @@
       "description": "The domain to send emails from, e.g. mg.example.com",
       "required": false
     },
-    "FROM_EMAIL": {
+    "MAILGUN_EMAIL": {
       "description": "Email address to send mail from with Mailgun.  Example: Mailgun Sandbox <postmaster@sandbox0abcdefghijklmnopqrstuvwxyz.mailgun.org>",
-      "required": false
-    },
-    "TO_EMAIL": {
-      "description": "Email addresses (comma separated) to send alerts with Mailgun.  Example: abc@gmail.com, xyz@gmail.com",
       "required": false
     },
     "NODE_MODULES_CACHE": {
