@@ -4,6 +4,9 @@ const redis = require('../lib/redis.js');
 const Alert = require('../lib/bot/alert.js');
 const mgEmail = require('../lib/bot/send-email.js');
 const sms = require('../lib/bot/send-sms.js');
+const puppeteer = require('puppeteer');
+const Semaphore = require('semaphore-async-await').default;
+const { ALERT_TYPES, MAX_PAGES } = require('../lib/constants.js');
 
 const COOLDOWN = 1;
 
@@ -15,12 +18,15 @@ const COOLDOWN = 1;
     const keys = await redis.keysAsync('alert.*');
     const values = keys.length ? await redis.mgetAsync(keys) : [];
     console.log(`checking ${values.length} flights`);
+
+    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
+    const lock = new Semaphore(MAX_PAGES);
+
     const promises = values
       .map(data => new Alert(data))
       .sort((a, b) => a.date - b.date)
       .map(async alert => {
         const flight = `${alert.formattedDate} #${alert.number} ${alert.from} → ${alert.to}`;
-
         // delete alert if in past
         if (alert.date < Date.now()) {
           console.log(`${flight} expired, deleting`);
@@ -33,7 +39,7 @@ const COOLDOWN = 1;
         const cooldown = await redis.existsAsync(cooldownKey);
 
         // get current price
-        await alert.getLatestPrice();
+        await alert.getLatestPrice(browser, lock);
         await redis.setAsync(alert.key(), alert.toJSON());
 
         // send message if cheaper
@@ -42,18 +48,29 @@ const COOLDOWN = 1;
           console.log(`${flight} dropped $${less} to $${alert.latestPrice}${cooldown ? ' (on cooldown)' : ''}`);
           if (!cooldown) {
             const noProtocolPath = basePath.substr(basePath.indexOf('://') + 3);
-            const message = [
-              `WN flight #${alert.number} `,
-              `${alert.from} to ${alert.to} on ${alert.formattedDate} `,
-              `was $${alert.price}, is now $${alert.latestPrice}. `,
-              `\n\nOnce rebooked, tap link to lower alert threshold: `,
-              `${noProtocolPath}/${alert.id}/change-price?price=${alert.latestPrice}`
-            ].join('');
+            let message;
+            if (alert.alertType === ALERT_TYPES.SINGLE) {
+              message = [
+                `WN flight #${alert.number} `,
+                `${alert.from} to ${alert.to} on ${alert.formattedDate} `,
+                `was $${alert.price}, is now $${alert.latestPrice}. `,
+                `\n\nOnce rebooked, tap link to lower alert threshold: `,
+                `${noProtocolPath}/${alert.id}/change-price?price=${alert.latestPrice}`
+              ].join('');
+            } else if (alert.alertType === ALERT_TYPES.DAY) {
+              message = [
+                `A cheaper Southwest flight on ${alert.formattedDate} `,
+                `${alert.from} to ${alert.to} was found! `,
+                `Was $${alert.price}, is now $${alert.latestPrice}. `,
+                `\n\nOnce rebooked, tap link to lower alert threshold: `,
+                `${noProtocolPath}/${alert.id}/change-price?price=${alert.latestPrice}`
+              ].join('');
+            }
             const subject = [
               `✈ Southwest Price Drop Alert: $${alert.price} → $${alert.latestPrice}. `
             ].join('');
-            if (mgEmail.enabled && alert.to_email !== "") {await mgEmail.sendEmail(alert.to_email, subject, message);}
-            if (sms.enabled && alert.phone !== "") {await sms.sendSms(alert.phone, message);}
+            if (mgEmail.enabled && alert.to_email) { await mgEmail.sendEmail(alert.to_email, subject, message); }
+            if (sms.enabled && alert.phone) { await sms.sendSms(alert.phone, message); }
 
             await redis.setAsync(cooldownKey, '');
             await redis.expireAsync(cooldownKey, COOLDOWN);
@@ -64,9 +81,11 @@ const COOLDOWN = 1;
       });
 
     await Promise.all(promises);
+    await browser.close();
     redis.quit();
   } catch (e) {
-    console.log(e);
+    console.error(e);
+    await browser.close();
     redis.quit();
   }
 })();

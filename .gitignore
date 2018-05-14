@@ -1,4 +1,8 @@
-node_modules/
+.DS_Store
 .env
-samples
+.idea
+.vscode
+node_modules/
 dump.rdb
+samples
+yarn-error.log
